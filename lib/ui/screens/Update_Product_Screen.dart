@@ -1,9 +1,10 @@
 import 'dart:convert';
 
 import 'package:crudapplivcation/ui/model/Product.dart';
-import 'package:crudapplivcation/ui/style/style.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
+import 'package:get/get.dart';
+import 'package:crudapplivcation/ui/widgets/custom_text_field.dart';
 
 
 class UpdateProductScreen extends StatefulWidget {
@@ -41,102 +42,110 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Update product'),
+        title: Text('update_product'.tr),
       ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16),
-          child: _buildProductForm(),
+          child: Column(
+            children: [
+              CustomTextField(
+                label: 'product_name'.tr,
+                hint: 'please_enter_product_name'.tr,
+                controller: _nameTEController,
+                prefixIcon: Icons.shopping_bag,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'please_enter_product_name'.tr;
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 10),
+              CustomTextField(
+                label: 'product_code'.tr,
+                hint: 'please_enter_product_code'.tr,
+                controller: _codeTEController,
+                prefixIcon: Icons.qr_code,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'please_enter_product_code'.tr;
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 10),
+              CustomTextField(
+                label: 'price'.tr,
+                hint: 'please_enter_price'.tr,
+                controller: _priceTEController,
+                keyboardType: TextInputType.number,
+                prefixIcon: Icons.attach_money,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'please_enter_price'.tr;
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 10),
+              CustomTextField(
+                label: 'total_price'.tr,
+                hint: 'please_enter_total_price'.tr,
+                controller: _totalPriceTEController,
+                keyboardType: TextInputType.number,
+                prefixIcon: Icons.price_change,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'please_enter_total_price'.tr;
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 10),
+              CustomTextField(
+                label: 'quantity'.tr,
+                hint: 'please_enter_quantity'.tr,
+                controller: _quantityTEController,
+                keyboardType: TextInputType.number,
+                prefixIcon: Icons.inventory,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'please_enter_quantity'.tr;
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 10),
+              CustomTextField(
+                label: 'image_url'.tr,
+                hint: 'please_enter_image_url'.tr,
+                controller: _imageTEController,
+                prefixIcon: Icons.image,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'please_enter_image_url'.tr;
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: Visibility(
+                  visible: !_updateProductInProgress,
+                  replacement: const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                  child: ElevatedButton(
+                    onPressed: _updateProduct,
+                    child: Text('update_product'.tr),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildProductForm() {
-    return Form(
-      // TODO: complete form validation
-      child: Column(
-        children: [
-          TextFormField(
-            controller: _nameTEController,
-            decoration: AppInputDecoration('enter your name','nane'),
-            validator: (String? value) {
-              if (value?.trim().isEmpty ?? true) {
-                return 'Enter product name';
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 10),
-          TextFormField(
-            controller: _priceTEController,
-            decoration: AppInputDecoration('Enter product price','Price'),
-            validator: (String? value) {
-              if (value?.trim().isEmpty ?? true) {
-                return 'Enter product price';
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 10),
-          TextFormField(
-            controller: _totalPriceTEController,
-            decoration: AppInputDecoration('Product Total Price','Total price'),
-            validator: (String? value) {
-              if (value?.trim().isEmpty ?? true) {
-                return 'Enter product total price';
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 10),
-          TextFormField(
-            controller: _quantityTEController,
-            decoration: AppInputDecoration('Product Quantity','Quantity'),
-            validator: (String? value) {
-              if (value?.trim().isEmpty ?? true) {
-                return 'Enter product quantity';
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 10),
-          TextFormField(
-            controller: _codeTEController,
-            decoration: AppInputDecoration('Product Code','Code'),
-            validator: (String? value) {
-              if (value?.trim().isEmpty ?? true) {
-                return 'Enter product code';
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 10),
-          TextFormField(
-            controller: _imageTEController,
-            decoration: AppInputDecoration('Product Image','Image url'),
-            validator: (String? value) {
-              if (value?.trim().isEmpty ?? true) {
-                return 'Enter product image url';
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 16),
-          Visibility(
-            visible: _updateProductInProgress == false,
-            replacement: const Center(
-              child: CircularProgressIndicator(),
-            ),
-            child: ElevatedButton(
-              onPressed: () {
-                // TODO: check form validation
-                _updateProduct();
-              },
-              child: const Text('Update Product'),
-            ),
-          )
-        ],
       ),
     );
   }
@@ -144,39 +153,30 @@ class _UpdateProductScreenState extends State<UpdateProductScreen> {
   Future<void> _updateProduct() async {
     _updateProductInProgress = true;
     setState(() {});
-    Uri uri = Uri.parse(
-        'https://crud.teamrabbil.com/api/v1/UpdateProduct/${widget.product.id}');
 
-    Map<String, dynamic> requestBody = {
+    final Map<String, dynamic> inputData = {
       "Img": _imageTEController.text.trim(),
       "ProductCode": _codeTEController.text.trim(),
       "ProductName": _nameTEController.text.trim(),
       "Qty": _quantityTEController.text.trim(),
       "TotalPrice": _totalPriceTEController.text.trim(),
-      "UnitPrice": _priceTEController.text.trim()
+      "UnitPrice": _priceTEController.text.trim(),
     };
 
-    Response response = await post(
-      uri,
-      headers: {'Content-type': 'application/json'},
-      body: jsonEncode(requestBody),
+    final response = await http.post(
+      Uri.parse('https://crud.teamrabbil.com/api/v1/UpdateProduct/${widget.product.id}'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(inputData),
     );
-    print(response.statusCode);
-    print(response.body);
+
     _updateProductInProgress = false;
     setState(() {});
+
     if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Product has been updated!'),
-        ),
-      );
+      Get.snackbar('Success', 'Product updated successfully');
+      Get.back();
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Product update failed! Try again.'),
-        ),
-      );
+      Get.snackbar('Error', 'Failed to update product');
     }
   }
 
